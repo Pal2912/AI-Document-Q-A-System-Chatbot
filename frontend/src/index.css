@@ -1,0 +1,161 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..700&family=Inter:wght@400..700&family=JetBrains+Mono:wght@400..500&display=swap");
+@import "tailwindcss";
+
+/*
+  Manual dark mode: Tailwind v4 defaults to `dark:` matching the OS
+  `prefers-color-scheme`. This app needs a user-controlled toggle (see
+  ThemeContext.jsx, built later in this phase) instead, so we redefine the
+  `dark:` variant to activate whenever an ancestor has the `.dark` class.
+*/
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Design system tokens for the RAG Chatbot.
+
+  Palette concept: an "annotated document" feel rather than a generic SaaS
+  gradient look. Deep ink-blue + warm paper-white, with a muted amber accent
+  used ONLY for source citations (the one signature interactive element —
+  every answer traces back to a highlighted spot in the original document).
+
+  Typefaces:
+    - Source Serif 4  -> headings (reading-heavy product, serif = "document")
+    - Inter           -> body/UI text (legible in dense chat UI)
+    - JetBrains Mono   -> metadata, timestamps, file sizes (a small "data" texture)
+*/
+
+@theme {
+  --font-display: "Source Serif 4", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+
+  /* Light mode (paper) */
+  --color-paper: #faf8f4;
+  --color-paper-raised: #ffffff;
+  --color-ink: #0f1729;
+  --color-ink-soft: #3d4a63;
+  --color-ink-faint: #8993a8;
+
+  /* Dark mode (ink) */
+  --color-ink-bg: #0f1729;
+  --color-ink-bg-raised: #18223b;
+  --color-paper-text: #f4f1ea;
+  --color-paper-text-soft: #b6bdcc;
+  --color-paper-text-faint: #6b7488;
+
+  /* Shared accents */
+  --color-accent: #c9852c;
+  --color-accent-soft: #e8b873;
+  --color-accent-bg: #fbf0de;
+  --color-accent-bg-dark: #3a2a14;
+
+  --color-border-light: #e8e3d8;
+  --color-border-dark: #2a3552;
+
+  --color-success: #4d7c5f;
+  --color-error: #b3463f;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  .dark body {
+    background-color: var(--color-ink-bg);
+    color: var(--color-paper-text);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+  }
+
+  /* Visible keyboard focus everywhere — accessibility floor, never skip this */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  /* Subtle entrance animation for chat messages, toasts, and cards as they
+     appear — short and purposeful, not decorative. Respects
+     prefers-reduced-motion via the global rule in @layer base above. */
+  .animate-in {
+    animation: fade-slide-in 0.25s ease-out;
+  }
+
+  @keyframes fade-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Minimal markdown styling for assistant chat messages (ReactMarkdown
+     output). Hand-written instead of pulling in @tailwindcss/typography,
+     since chat bubbles only ever need a handful of these elements. */
+  .prose-chat p {
+    margin-bottom: 0.5em;
+  }
+  .prose-chat p:last-child {
+    margin-bottom: 0;
+  }
+  .prose-chat ul,
+  .prose-chat ol {
+    margin: 0.4em 0;
+    padding-left: 1.4em;
+  }
+  .prose-chat ul {
+    list-style-type: disc;
+  }
+  .prose-chat ol {
+    list-style-type: decimal;
+  }
+  .prose-chat li {
+    margin-bottom: 0.2em;
+  }
+  .prose-chat strong {
+    font-weight: 600;
+  }
+  .prose-chat code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: color-mix(in srgb, currentColor 10%, transparent);
+    padding: 0.15em 0.4em;
+    border-radius: 0.25em;
+  }
+  .prose-chat a {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+}

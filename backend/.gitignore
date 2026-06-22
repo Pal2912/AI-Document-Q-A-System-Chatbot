@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+
+# Environment
+.env
+
+# Storage (uploaded files & vector indexes should not be committed)
+storage/uploaded_pdfs/*
+storage/vector_store/*
+!storage/uploaded_pdfs/.gitkeep
+!storage/vector_store/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Alembic
+*.pyc
+
+# Logs
+*.log
